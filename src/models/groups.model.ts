@@ -20,11 +20,13 @@ const groupSchema: Schema = new Schema(
         ref: 'Expense',
       },
     ],
-    bill: {
-      userId: Schema.Types.ObjectId,
-      repaymentAmount: Number,
-      lendingAmount: Number,
-    },
+    bill: [
+      {
+        userId: Schema.Types.ObjectId,
+        repaymentAmount: Number,
+        lendingAmount: Number,
+      },
+    ],
     isDeleted: {
       type: Boolean,
       default: false,

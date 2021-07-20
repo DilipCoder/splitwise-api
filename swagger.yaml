@@ -105,6 +105,7 @@ definitions:
   users:
     type: object
     required:
+        - name
         - email
         - password
     properties:
@@ -116,6 +117,8 @@ definitions:
       password:
         type: string
         description: user Password
+      groups:
+        type: string[]
 
 schemes:
  - https

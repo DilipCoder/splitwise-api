@@ -47,7 +47,7 @@ class UserService {
       userData = { ...userData, password: hashedPassword };
     }
 
-    const updateUserById: User = await this.users.findByIdAndUpdate(userId, { userData });
+    const updateUserById: User = await this.users.findByIdAndUpdate(userId, { ...userData }, { new: true });
     if (!updateUserById) throw new HttpException(409, "You're not user");
 
     return updateUserById;
@@ -65,7 +65,15 @@ class UserService {
     if (!groupIds.length) throw new HttpException(400, 'no groupIds to add');
     //TODO: check for valid groupIds
 
-    const updateUserById: User = await this.users.findByIdAndUpdate(userId, { $push: { groups: { $each: groupIds } } }, { multi: true, new: true });
+    const user: User = await this.users.findById(userId);
+    if (!user) throw new HttpException(400, 'invalid userId');
+
+    const groupIdsForUpdate = groupIds.filter(x => !user.groups.includes(x));
+    const updateUserById: User = await this.users.findByIdAndUpdate(
+      userId,
+      { $push: { groups: { $each: groupIdsForUpdate } } },
+      { multi: true, new: true },
+    );
     if (!updateUserById) throw new HttpException(409, 'Internal Server Error');
 
     return updateUserById;

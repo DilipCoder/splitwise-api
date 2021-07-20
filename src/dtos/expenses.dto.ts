@@ -5,6 +5,7 @@ export class CreateExpenseDto {
   @IsPositive()
   public amount: number;
 
+  @IsString()
   public description: string;
 
   @IsNotEmpty()

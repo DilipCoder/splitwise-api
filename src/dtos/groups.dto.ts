@@ -7,12 +7,12 @@ export class CreateGroupDto {
   public name: string;
 
   @IsArray()
-  public userId: string[];
+  public userIds: string[];
 }
 
 export class AddUsersToGroupDto {
   @IsArray()
-  public userId: string[];
+  public userIds: string[];
 }
 
 export class GroupDto {

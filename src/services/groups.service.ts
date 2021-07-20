@@ -24,11 +24,12 @@ class GroupService {
   }
 
   public async createGroup(groupData: CreateGroupDto): Promise<Group> {
+    console.log('gData', groupData);
     if (isEmpty(groupData)) throw new HttpException(400, 'Internal Server ErrorData');
-    if (groupData.userId.length) throw new HttpException(400, 'Internal Server ErrorData');
-
-    const createGroupData: Group = await this.groups.create(groupData);
-    await this.userService._addGroupsToUser(groupData.userId[0], [createGroupData._id]);
+    if (groupData.userIds.length == 0) throw new HttpException(400, 'Internal Server ErrorData');
+    const group = { name: groupData.name, members: groupData.userIds };
+    const createGroupData: Group = await this.groups.create(group);
+    await this.userService._addGroupsToUser(groupData.userIds[0], [createGroupData._id]);
     return createGroupData;
   }
 
@@ -53,10 +54,14 @@ class GroupService {
   public async addUsersToGroup(groupId: string, userIds: string[]): Promise<Group> {
     if (!userIds.length) throw new HttpException(400, 'no userIds to add');
     //TODO: check for valid userIds
+    const group: Group = await this.groups.findById(groupId);
+    if (!group) throw new HttpException(400, 'invalid group id');
+
+    const userIdsForUpdate = userIds.filter(x => !group.members.includes(x));
 
     const updateGroupById: Group = await this.groups.findByIdAndUpdate(
       groupId,
-      { $push: { members: { $each: userIds } } },
+      { $push: { members: { $each: userIdsForUpdate } } },
       { multi: true, new: true },
     );
     if (!updateGroupById) throw new HttpException(409, 'Internal Server Error');
@@ -109,8 +114,8 @@ class GroupService {
     if (!amount) throw new HttpException(400, 'no amount to add');
 
     const groupData: Group = await this.groups.findById(groupId);
-    const billMap = (groupData.bill || []).reduce((acc, curr) => ({ ...acc, [curr.userId]: curr }), {});
-    const sharePerUser = amount / groupData.members?.length;
+    const billMap = groupData.bill.reduce((acc, curr) => ({ ...acc, [curr.userId]: curr }), {});
+    const sharePerUser = (amount / groupData.members?.length).toFixed(2);
     const updatedBill = (groupData.members || []).map(x => {
       if (x == userId) {
         return {
