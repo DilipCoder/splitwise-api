@@ -53,11 +53,32 @@ class UserService {
     return updateUserById;
   }
 
+  //TODO: group references can be removed from group service
   public async deleteUser(userId: string): Promise<User> {
     const deleteUserById: User = await this.users.findByIdAndDelete(userId);
     if (!deleteUserById) throw new HttpException(409, "You're not user");
 
     return deleteUserById;
+  }
+
+  public async _addGroupsToUser(userId: string, groupIds: string[]): Promise<User> {
+    if (!groupIds.length) throw new HttpException(400, 'no groupIds to add');
+    //TODO: check for valid groupIds
+
+    const updateUserById: User = await this.users.findByIdAndUpdate(userId, { $push: { groups: { $each: groupIds } } }, { multi: true, new: true });
+    if (!updateUserById) throw new HttpException(409, 'Internal Server Error');
+
+    return updateUserById;
+  }
+
+  public async _removeGroupsToUser(userId: string, groupIds: string[]): Promise<User> {
+    if (!groupIds.length) throw new HttpException(400, 'no groupIds to add');
+    //TODO: check for valid groupIds
+
+    const updateUserById: User = await this.users.findByIdAndUpdate(userId, { $pull: { groups: { $in: groupIds } } }, { multi: true, new: true });
+    if (!updateUserById) throw new HttpException(409, 'Internal Server Error');
+
+    return updateUserById;
   }
 }
 

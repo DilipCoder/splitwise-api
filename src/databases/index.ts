@@ -6,7 +6,7 @@ const { host, port, database, password }: dbConfig = config.get('dbConfig');
 
 // db setup as local and hosted as per node environment (.env)
 const url =
-  env === 'test'
+  env !== 'production'
     ? `mongodb+srv://tempUser:${password}@cluster0.groyx.mongodb.net/${database}?retryWrites=true&w=majority`
     : `mongodb://${host}:${port}/${database}`;
 

@@ -14,7 +14,8 @@ const deleteAtPath = (obj, path, index) => {
   deleteAtPath(obj[path[index]], path, index + 1);
 };
 
-const toJSON = (schema) => {
+// TODO: invoke type-checking
+export const toJSON = schema => {
   let transform;
   if (schema.options.toJSON && schema.options.toJSON.transform) {
     transform = schema.options.toJSON.transform;
@@ -22,7 +23,7 @@ const toJSON = (schema) => {
 
   schema.options.toJSON = Object.assign(schema.options.toJSON || {}, {
     transform(doc, ret, options) {
-      Object.keys(schema.paths).forEach((path) => {
+      Object.keys(schema.paths).forEach(path => {
         if (schema.paths[path].options && schema.paths[path].options.private) {
           deleteAtPath(ret, path.split('.'), 0);
         }
@@ -39,5 +40,3 @@ const toJSON = (schema) => {
     },
   });
 };
-
-module.exports = toJSON;
