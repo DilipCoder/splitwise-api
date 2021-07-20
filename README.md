@@ -1,6 +1,10 @@
 # splitwise-api
 Backend TypeScript
 
+## command
+
+`yarn run dev`
+
 ## Postman Documentation
 https://github.com/DilipCoder/splitwise-api.git
 
