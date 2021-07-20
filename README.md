@@ -6,7 +6,7 @@ Backend TypeScript
 `yarn run dev`
 
 ## Postman Documentation
-https://github.com/DilipCoder/splitwise-api.git
+https://www.getpostman.com/collections/75a974ec33ecab8102fa
 
 ## .env file
 
